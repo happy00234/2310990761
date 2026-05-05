@@ -252,3 +252,179 @@ LIMIT 10;
 DESC use kiya → latest notifications first
 LIMIT add kiya → unnecessary data load avoid
 Index use kiya → fast query execution
+
+
+
+# Stage 4: Performance Optimization
+
+##  Problem
+
+Currently, every time a user opens the app, the system fetches notifications directly from the database.
+
+ Issues:
+- High database load
+- Increased response time
+- Poor scalability for large users
+
+---
+
+##  Why This is Bad
+
+1. Repeated DB Calls  
+- Same data baar-baar fetch ho raha hai  
+
+2. Slow Response  
+- Database query time high ho sakta hai  
+
+3. Not Scalable  
+- 50k users ke saath DB overload ho jayega  
+
+---
+
+##  Optimized Solution
+
+### 1. Caching (Most Important)
+
+- Use Redis (or in-memory cache)
+- Store frequently accessed notifications
+
+ Flow:
+- First request → DB hit → cache me store  
+- Next request → direct cache se data  
+
+---
+
+### 2. Pagination
+
+- Limit results using `page` and `limit`
+
+ Benefit:
+- Large data ek baar me load nahi hota  
+- Faster response  
+
+---
+
+### 3. Lazy Loading
+
+- Initially only few notifications load karo  
+- Scroll pe aur data fetch karo  
+
+---
+
+### 4. Reduce DB Hits
+
+- Avoid unnecessary API calls  
+- Use conditional fetching  
+
+---
+
+##  Final Approach
+
+- Cache use karo (fast access)
+- Pagination use karo (less data load)
+- Lazy loading use karo (better UX)
+
+---
+
+##  Final Explanation
+
+System optimized by:
+- Reducing database calls
+- Improving response time
+- Making system scalable for large users
+``` id="sl2ovw"
+```
+---
+
+
+# Stage 5: Scalable Notification Delivery System
+
+##  Problem
+
+System needs to send notifications to 50,000 users at once.
+
+ Issues:
+- Sending one-by-one is slow
+- High chance of failure
+- Email service may crash
+- Not scalable
+
+---
+
+##  Naive Approach (Wrong)
+
+- Loop through all users
+- Send notifications one-by-one
+
+ Problems:
+- Very slow
+- Blocking system
+- High failure rate
+
+---
+
+##  Optimized Scalable Solution
+
+### 1. Use Queue System
+
+- Use message queue (e.g., Kafka / RabbitMQ)
+
+ Flow:
+1. Notification request comes
+2. Message pushed to queue
+3. Workers process messages asynchronously
+
+---
+
+### 2. Asynchronous Processing
+
+- Background workers handle notification sending
+- Main server remains fast
+
+---
+
+### 3. Batch Processing
+
+- Send notifications in batches (e.g., 1000 users at a time)
+
+ Benefit:
+- Reduces load
+- Improves performance
+
+---
+
+### 4. Retry Mechanism
+
+- If notification fails → retry automatically
+
+ Prevents data loss
+
+---
+
+### 5. Rate Limiting
+
+- Control number of requests per second
+
+ Prevents system crash
+
+---
+
+##  Final Architecture
+
+User → API → Queue → Worker → Notification Service
+
+---
+
+##  Final Explanation
+
+System is scalable because:
+- Uses asynchronous processing
+- Avoids blocking operations
+- Handles failures using retry logic
+- Efficiently manages large user load
+``` id="95njzk"
+
+---
+
+```
+
