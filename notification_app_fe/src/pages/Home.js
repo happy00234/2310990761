@@ -1,38 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import NotificationCard from "../components/NotificationCard";
 
-const notifications = [
-  {
-    id: 1,
-    type: "Placement",
-    message: "Google hiring",
-    isRead: false,
-    createdAt: "2026-05-04",
-  },
-  {
-    id: 2,
-    type: "Result",
-    message: "Exam result declared",
-    isRead: true,
-    createdAt: "2026-05-03",
-  },
-  {
-    id: 3,
-    type: "Event",
-    message: "Hackathon coming",
-    isRead: false,
-    createdAt: "2026-05-02",
-  },
-];
-
 function Home() {
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/notifications")
+      .then((res) => res.json())
+      .then((data) => setNotifications(data.notifications))
+      .catch((err) => console.error("Error fetching data:", err));
+  }, []);
+
   return (
     <div className="container">
       <h1>Notifications</h1>
 
-      {notifications.map((n) => (
-        <NotificationCard key={n.id} notification={n} />
-      ))}
+      {notifications.length === 0 ? (
+        <p>Loading...</p>
+      ) : (
+        notifications.map((n) => (
+          <NotificationCard key={n.id} notification={n} />
+        ))
+      )}
     </div>
   );
 }
