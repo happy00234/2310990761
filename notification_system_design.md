@@ -213,3 +213,42 @@ Easy scaling
 Better performance for real-time notification systems
 
 
+# Stage 3: Query Optimization
+
+##  Given Query
+
+```sql
+SELECT * FROM notifications 
+WHERE studentID = 1042 AND isRead = false 
+ORDER BY createdAt ASC;
+```
+
+Problems in the Query
+No Index Usage
+Query full table scan karegi
+Performance slow ho jayega (especially large data me)
+ORDER BY Issue
+Sorting costly hai bina index ke
+Time complexity increase hogi
+ASC Order
+Old notifications pehle aa rahi hain
+User ko recent notifications chahiye hote hain
+
+   Optimized Solution
+1. Add Index
+CREATE INDEX idx_notifications 
+ON notifications (studentID, isRead, createdAt DESC);
+
+ Benefits:
+
+Fast filtering (studentID + isRead)
+Sorting optimized (createdAt)
+2. Optimized Query
+SELECT * FROM notifications 
+WHERE studentID = 1042 AND isRead = false 
+ORDER BY createdAt DESC 
+LIMIT 10;
+ Improvements
+DESC use kiya → latest notifications first
+LIMIT add kiya → unnecessary data load avoid
+Index use kiya → fast query execution
